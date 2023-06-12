@@ -67,8 +67,8 @@ Relational query language 는 3가지 종류로 구분될 수 있습니다.
   - r &#10781;<sub>&theta;</sub> s = &sigma;<sub>&theta;</sub>(r &times; s)
 * Assignment: &#8592;
   - variable_name &leftarrow; relational_algebra_expression
-* Division: &#247; &#xF7;
-  - r &div; s = &Pi;<sub>R-S</sub>(r) - &Pi;( (&Pi;<sub>R-S</sub>(r) &times; s) - &Pi;<sub>R-S,S</sub>(r))
+* Division: &#247;
+  - r &#247; s = &Pi;<sub>R-S</sub>(r) - &Pi;( (&Pi;<sub>R-S</sub>(r) &times; s) - &Pi;<sub>R-S,S</sub>(r))
   - Find all customers who have an account at all the branches
 
 
