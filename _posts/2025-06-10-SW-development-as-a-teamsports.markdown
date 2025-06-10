@@ -38,12 +38,6 @@ categories: SW Engineering
 ### ⚽ 축구
 
 **개인 지표**
-| 지표 | 의미 |
-| :--- | :--- |
-| 골 득점 | 직접적 성과 기여 |
-| 어시스트 | 팀원 성공 지원 |
-| 패스 성공률 | 볼 배급 정확성 |
-| 태클 성공률 | 수비 기여도 |
 <table>
   <thead>
     <tr>
@@ -72,46 +66,138 @@ categories: SW Engineering
 </table>
 
 **팀 지표**
-| 지표 | 의미 |
-| :--- | :--- |
-| 점유율 | 게임 주도권 |
-| 패스 정확도 | 팀 연결력 |
-| 공격 효율성 | 득점 창출력 |
+<table>
+  <thead>
+    <tr>
+      <th align="left">지표</th>
+      <th align="left">의미</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>점유율</td>
+      <td>게임 주도권</td>
+    </tr>
+    <tr>
+      <td>패스 정확도</td>
+      <td>팀 연결력</td>
+    </tr>
+    <tr>
+      <td>공격 효율성</td>
+      <td>득점 창출력</td>
+    </tr>
+  </tbody>
+</table>
 
 ### ⚾ 야구
 
 **개인 지표**
-| 지표 | 의미 |
-| :--- | :--- |
-| 타율(AVG) | 안타 능력 |
-| 출루율(OBP) | 출루 능력 |
-| 방어율(ERA) | 실점 방지 |
-| WHIP | 투수 안정성 |
+<table>
+  <thead>
+    <tr>
+      <th align="left">지표</th>
+      <th align="left">의미</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>타율(AVG)</td>
+      <td>안타 능력</td>
+    </tr>
+    <tr>
+      <td>출루율(OBP)</td>
+      <td>출루 능력</td>
+    </tr>
+    <tr>
+      <td>방어율(ERA)</td>
+      <td>실점 방지</td>
+    </tr>
+    <tr>
+      <td>WHIP</td>
+      <td>투수 안정성</td>
+    </tr>
+  </tbody>
+</table>
 
 **팀 지표**
-| 지표 | 의미 |
-| :--- | :--- |
-| 팀 득점 | 공격력 종합 |
-| 팀 방어율 | 투수진 성과 |
-| 승률 | 최종 성과 |
+<table>
+  <thead>
+    <tr>
+      <th align="left">지표</th>
+      <th align="left">의미</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>팀 득점</td>
+      <td>공격력 종합</td>
+    </tr>
+    <tr>
+      <td>팀 방어율</td>
+      <td>투수진 성과</td>
+    </tr>
+    <tr>
+      <td>승률</td>
+      <td>최종 성과</td>
+    </tr>
+  </tbody>
+</table>
+
 
 ### 🏀 농구
 
 **개인 지표**
-| 지표 | 의미 |
-| :--- | :--- |
-| PER | 종합 효율성 |
-| 야투 성공률 | 슛 정확도 |
-| 리바운드 | 볼 경합 |
-| 어시스트 | 팀플레이 |
+<table>
+  <thead>
+    <tr>
+      <th align="left">지표</th>
+      <th align="left">의미</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>PER</td>
+      <td>종합 효율성</td>
+    </tr>
+    <tr>
+      <td>야투 성공률</td>
+      <td>슛 정확도</td>
+    </tr>
+    <tr>
+      <td>리바운드</td>
+      <td>볼 경합</td>
+    </tr>
+    <tr>
+      <td>어시스트</td>
+      <td>팀플레이</td>
+    </tr>
+  </tbody>
+</table>
+
 
 **팀 지표**
-| 지표 | 의미 |
-| :--- | :--- |
-| 오펜시브 레이팅 | 공격 효율 |
-| 디펜시브 레이팅 | 수비 효율 |
-| 볼 무브먼트 | 패스 연결 |
-
+<table>
+  <thead>
+    <tr>
+      <th align="left">지표</th>
+      <th align="left">의미</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>오펜시브 레이팅</td>
+      <td>공격 효율</td>
+    </tr>
+    <tr>
+      <td>디펜시브 레이팅</td>
+      <td>수비 효율</td>
+    </tr>
+    <tr>
+      <td>볼 무브먼트</td>
+      <td>패스 연결</td>
+    </tr>
+  </tbody>
+</table>
 ---
 
 ## 👨‍💻 개발자 ↔ 선수 성과 지표
