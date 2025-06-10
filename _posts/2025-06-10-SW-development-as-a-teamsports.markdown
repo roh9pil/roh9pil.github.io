@@ -44,6 +44,32 @@ categories: SW Engineering
 | 어시스트 | 팀원 성공 지원 |
 | 패스 성공률 | 볼 배급 정확성 |
 | 태클 성공률 | 수비 기여도 |
+<table>
+  <thead>
+    <tr>
+      <th align="left">지표</th>
+      <th align="left">의미</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>골 득점</td>
+      <td>직접적 성과 기여</td>
+    </tr>
+    <tr>
+      <td>어시스트</td>
+      <td>팀원 성공 지원</td>
+    </tr>
+    <tr>
+      <td>패스 성공률</td>
+      <td>볼 배급 정확성</td>
+    </tr>
+    <tr>
+      <td>태클 성공률</td>
+      <td>수비 기여도</td>
+    </tr>
+  </tbody>
+</table>
 
 **팀 지표**
 | 지표 | 의미 |
