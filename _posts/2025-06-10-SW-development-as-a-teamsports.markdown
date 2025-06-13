@@ -193,8 +193,8 @@ categories: SW Engineering
       <td>수비 효율</td>
     </tr>
     <tr>
-      <td>볼 무브먼트</td>
-      <td>패스 연결</td>
+      <td>Pace</td>
+      <td>공격 템포</td>
     </tr>
   </tbody>
 </table>
