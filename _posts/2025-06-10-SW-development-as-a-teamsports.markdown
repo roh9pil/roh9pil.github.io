@@ -156,11 +156,11 @@ categories: SW Engineering
   </thead>
   <tbody>
     <tr>
-      <td>PER</td>
-      <td>종합 효율성</td>
+      <td>PTS</td>
+      <td>득점</td>
     </tr>
     <tr>
-      <td>야투 성공률</td>
+      <td>FG% </td>
       <td>슛 정확도</td>
     </tr>
     <tr>
