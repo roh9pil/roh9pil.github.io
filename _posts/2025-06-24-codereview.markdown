@@ -191,7 +191,8 @@ Python과 같은 프로그래밍 언어에 익숙하다면 직접 스크립트�
 *   **방법**: `PyMuPDF`나 `pdfminer` 같은 라이브러리로 텍스트를 추출하고, `pdf2image`로 이미지를 추출한 후, 이를 조합하여 마크다운을 생성합니다[7]. ChatGPT와 같은 LLM API를 활용하여 OCR로 추출한 텍스트를 마크다운 형식으로 변환할 수도 있습니다[9].
 *   **장점**: 변환 로직을 완벽하게 제어할 수 있어 특정 요구사항에 최적화된 결과물을 얻을 수 있습니다[7].
 
-인용:
+# References
+
 [1] kodeu-ribyu-gaci-biyong-hwansan.pdf https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/53162929/71909694-6d4b-43d8-992c-a9840368934f/kodeu-ribyu-gaci-biyong-hwansan.pdf
 [2] Simplifying the Process: 4 Tools To Convert PDF Files to Markdown https://pdf.wondershare.com/convert-pdf/pdf-to-markdown.html
 [3] Convert PDF To Markdown Online - Aspose Products https://products.aspose.app/words/conversion/pdf-to-markdown
