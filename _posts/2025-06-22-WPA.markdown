@@ -1,3 +1,12 @@
+---
+layout: post
+title:  "프로젝트 성공 확률 기여도 (PSPA)."
+date:   2025-06-24 08:06:00 +0900
+categories: SW Engineering
+---
+
+
+
 # 프로젝트 성공 확률 기여도(PSPA): 소프트웨어 개발의 맥락적 가치 측정을 위한 프레임워크
 
 ## 서론
