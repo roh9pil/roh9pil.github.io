@@ -204,3 +204,4 @@ Python과 같은 프로그래밍 언어에 익숙하다면 직접 스크립트�
 [9] Converting PDF to Markdown with OCR - API https://community.openai.com/t/converting-pdf-to-markdown-with-ocr/762476
 [10] PDF To Markdown Converter https://pdf2md.morethan.io
 [11] LlamaParse: Convert PDF (with tables) to Markdown https://www.youtube.com/watch?v=7DJzHncUlpI
+
