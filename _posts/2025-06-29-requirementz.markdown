@@ -245,7 +245,7 @@ SELECT
 FROM impact_analysis ia
 LEFT JOIN requirements r ON ia.target_id = r.id AND ia.target_type = 'requirement'
 LEFT JOIN artifacts a ON ia.target_id = a.id AND ia.target_type = 'artifact';
-``
+```
 
 ### 3.4. 요구사항 추적성 매트릭스(RTM) 생성
 RTM은 프로젝트 관리자와 QA팀에게 핵심적인 산출물입니다. 아래 SQL 쿼리는 traceability_links 테이블에 대한 JOIN을 사용하여 요구사항이 해당 테스트 케이스 및 최신 테스트 실행 상태에 어떻게 매핑되는지를 보여주는 고전적인 RTM을 구성합니다. 이는 기반이 되는 그래프 모델이 어떻게 전통적인 표 형식의 보고서를 생성할 수 있는지 보여줍니다.
