@@ -350,4 +350,71 @@ WHERE table_name = 'requirements'
   AND record_pk = 'your-requirement-uuid-here' -- <-- 조회할 요구사항의 UUID
 ORDER BY changed_at ASC;
 
+## 5. 안전한 기반: 역할 기반 접근 제어 (RBAC)
+### 5.1. 최소 권한의 원칙
+모든 사용자가 동일한 수준의 접근 권한을 가져서는 안 됩니다. 역할 기반 접근 제어(RBAC)는 이를 강제하는 표준 패턴으로, 사용자에게 직무 수행에 필요한 최소한의 권한만을 부여하여 우발적이거나 악의적인 손상 위험을 줄이는 핵심 보안 원칙입니다.
+
+### 5.2. 유연한 RBAC 데이터 모델
+단순히 사용자 테이블에 역할 플래그를 두는 것은 세분화된 제어에 불충분합니다. 역할과 권한을 별도의 테이블로 정규화하는 것이 훨씬 견고한 모델입니다. 이 정규화된 스키마는 사용자가 여러 역할을 가질 수 있게 하고(예: 팀 리더는 '관리자'이자 '개발자'), 관리자가 코드 배포 없이 데이터 변경만으로 새로운 역할을 정의하고 권한을 할당할 수 있게 하여 시스템을 훨씬 유연하고 확장 가능하게 만듭니다.
+RBAC DDL 구현
+```sql
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    username VARCHAR(100) NOT NULL UNIQUE,
+    hashed_password TEXT NOT NULL,
+    email VARCHAR(255) UNIQUE,
+    is_active BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE roles (
+    id SERIAL PRIMARY KEY,
+    role_name VARCHAR(50) NOT NULL UNIQUE,
+    description TEXT
+);
+
+-- 권한은 데이터베이스 작업이 아닌 비즈니스 프로세스 작업에 기반해야 합니다.
+-- 'UPDATE'가 아닌 'APPROVE_REQUIREMENT'와 같이 의미론적 권한을 정의하면
+-- 보안 모델이 기본 스키마에서 분리되어 비즈니스 로직 변경에 더 탄력적으로 대응할 수 있습니다.
+CREATE TABLE permissions (
+    id SERIAL PRIMARY KEY,
+    permission_name VARCHAR(100) NOT NULL UNIQUE, -- 예: 'CREATE_REQUIREMENT', 'APPROVE_REQUIREMENT'
+    description TEXT
+);
+
+CREATE TABLE user_roles (
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    role_id INTEGER NOT NULL REFERENCES roles(id) ON DELETE CASCADE,
+    PRIMARY KEY (user_id, role_id)
+);
+
+CREATE TABLE role_permissions (
+    role_id INTEGER NOT NULL REFERENCES roles(id) ON DELETE CASCADE,
+    permission_id INTEGER NOT NULL REFERENCES permissions(id) ON DELETE CASCADE,
+    PRIMARY KEY (role_id, permission_id)
+);
+```
+
+### 5.3. 접근 제어 강제
+데이터 모델만으로는 보안이 완성되지 않습니다. 애플리케이션 또는 데이터베이스 로직이 이를 사용하여 보안을 강제해야 합니다. 이는 애플리케이션 계층의 미들웨어를 통해 수행되거나, PostgreSQL의 행 수준 보안(Row-Level Security) 정책을 사용할 수 있습니다. 여기서는 권한 확인을 위한 데이터베이스 함수 예제를 제공합니다.
+구현 예시: 권한 확인 함수
+
+```sql
+CREATE OR REPLACE FUNCTION has_permission(p_user_id UUID, p_permission_name VARCHAR)
+RETURNS BOOLEAN AS $$
+DECLARE
+    has_perm BOOLEAN;
+BEGIN
+    SELECT EXISTS (
+        SELECT 1
+        FROM user_roles ur
+        JOIN role_permissions rp ON ur.role_id = rp.role_id
+        JOIN permissions p ON rp.permission_id = p.id
+        WHERE ur.user_id = p_user_id
+          AND p.permission_name = p_permission_name
+    ) INTO has_perm;
+    RETURN has_perm;
+END;
+$$ LANGUAGE plpgsql;
+```
+
 
