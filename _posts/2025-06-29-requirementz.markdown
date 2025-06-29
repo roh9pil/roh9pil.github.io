@@ -133,3 +133,132 @@ CREATE TABLE requirements (
 ### 2.3. PostgreSQL 타입과 제약조건을 통한 데이터 무결성 강제
 데이터 품질은 시스템의 신뢰성에 있어 가장 중요합니다. 애플리케이션 레벨의 로직에 의존하기보다 데이터베이스 자체의 기능을 사용하여 규칙을 강제하는 것이 훨씬 견고합니다. 예를 들어, status나 priority 같은 필드에 단순 TEXT 타입을 사용하는 대신, PostgreSQL의 CREATE TYPE... AS ENUM을 사용합니다. 이 접근법은 '완료', '처리됨'과 같이 모호하거나 비표준적인 값이 입력되는 것을 원천적으로 차단하고, 사전에 정의된 유효한 값('Proposed', 'Approved' 등)만 허용합니다. 이는 데이터베이스 계층에서부터 표준에서 요구하는 명확성과 일관성을 강제하여 데이터 손상 및 불일치를 방지하는 효과적인 방법입니다. 또한 FOREIGN KEY 제약 조건은 참조 무결성을 보장하고 NOT NULL 제약 조건은 핵심 필드의 완전성을 보장합니다.
 
+## 3. 종단간 추적성 및 영향 분석을 위한 아키텍처
+### 3.1. 추적성의 과제: 단순한 연결을 넘어서
+추적성은 요구사항의 생명주기를 순방향(구현 및 테스트로)과 역방향(근원으로) 모두 따라갈 수 있는 능력으로, ISO 26262와 같은 안전-필수 표준에서 의무적으로 요구됩니다. 전통적으로 요구사항 추적성 매트릭스(RTM)가 이 결과물로 사용되지만, 이를 수동으로 생성하고 유지하는 것은 오류가 발생하기 쉽고 확장성이 떨어집니다. 따라서 시스템은 RTM 생성을 자동화하고 더 동적인 분석을 수행할 수 있어야 합니다.
+
+### 3.2. 추적성을 그래프로 모델링하기
+요구사항, 설계, 코드, 테스트 간의 관계는 단순한 선형 순서가 아니라 복잡한 웹, 즉 그래프를 형성합니다. 이러한 관계를 명시적으로 모델링하기 위해 전용 링크 테이블을 사용하는 것은 requirements 테이블에 여러 외래 키를 추가하는 것보다 훨씬 유연한 접근 방식입니다. 이 방식은 단순히 요구사항과 테스트를 연결하는 것을 넘어, 요구사항을 다른 요구사항(분해), 리스크(위험 관리), 결함 등 다양한 아티팩트와 연결할 수 있게 해줍니다. 이는 본질적으로 PostgreSQL 내에서 그래프 데이터베이스의 핵심 개념을 에뮬레이션하는 것으로, 훨씬 더 강력한 아키텍처입니다.
+traceability_links 테이블 구현
+이 테이블은 그래프의 '엣지(edge)' 역할을 하며, 관계의 속성을 정의합니다.
+
+```sql
+CREATE TYPE trace_link_type_enum AS ENUM (
+    'satisfies',       -- 설계/코드가 요구사항을 만족시킴
+    'verifies',        -- 테스트가 요구사항을 검증함
+    'is_derived_from', -- 하위 요구사항이 상위 요구사항에서 파생됨
+    'conflicts_with',  -- 다른 요구사항과 충돌함
+    'relates_to'       -- 일반적인 관련성
+);
+
+CREATE TABLE traceability_links (
+    id BIGSERIAL PRIMARY KEY,
+    -- 요구사항과 아티팩트를 모두 참조하기 위해 두 개의 컬럼을 사용합니다.
+    -- 실제 구현에서는 하나의 source_id와 target_id로 통합하고, 타입을 저장하는 컬럼을 추가할 수 있습니다.
+    -- 여기서는 명확성을 위해 분리된 컬럼을 예시로 사용합니다.
+    source_requirement_id UUID REFERENCES requirements(id) ON DELETE CASCADE,
+    source_artifact_id UUID REFERENCES artifacts(id) ON DELETE CASCADE,
+    target_requirement_id UUID REFERENCES requirements(id) ON DELETE CASCADE,
+    target_artifact_id UUID REFERENCES artifacts(id) ON DELETE CASCADE,
+    link_type trace_link_type_enum NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    created_by TEXT, -- 변경을 수행한 사용자 ID
+    CONSTRAINT check_source_present CHECK (source_requirement_id IS NOT NULL OR source_artifact_id IS NOT NULL),
+    CONSTRAINT check_target_present CHECK (target_requirement_id IS NOT NULL OR target_artifact_id IS NOT NULL),
+    CONSTRAINT check_no_self_link CHECK (
+        (source_requirement_id IS NULL OR source_requirement_id <> target_requirement_id) AND
+        (source_artifact_id IS NULL OR source_artifact_id <> target_artifact_id)
+    )
+);
+```
+
+### 3.3. PostgreSQL 재귀 쿼리를 이용한 영향 분석
+추적성 그래프의 가장 큰 가치는 "만약 이 요구사항을 변경하면 어떤 테스트, 코드, 다른 요구사항이 영향을 받는가?"와 같은 "what-if" 질문, 즉 영향 분석을 수행하는 데 있습니다. 이는 전형적인 그래프 순회 문제이며, PostgreSQL의 WITH RECURSIVE 공통 테이블 표현식(CTE)은 이를 위한 완벽하고 고성능의 도구입니다.
+이 기능을 활용하면 여러 번의 복잡한 애플리케이션 레벨 루프 없이도 traceability_links 그래프를 임의의 깊이까지 탐색할 수 있습니다. 복잡한 순회 로직을 애플리케이션에서 데이터베이스 계층으로 옮기는 것은 중요한 아키텍처 결정입니다. 애플리케이션에서 재귀 함수를 구현하면 데이터베이스에 여러 번 왕복하며 성능 저하를 유발하는 반면(N+1 쿼리 문제), 단일 WITH RECURSIVE 쿼리는 데이터베이스의 쿼리 최적화기를 활용하여 전체 순회를 한 번의 작업으로 효율적으로 수행하므로 훨씬 뛰어난 성능과 확장성을 제공합니다.
+구현 예시: 하위 영향 분석 쿼리
+주어진 requirement_id에서 시작하여 'is_derived_from', 'satisfies' 등의 링크를 따라 모든 영향을 받는 하위 요구사항, 설계, 코드 등을 찾는 재귀 쿼리 예시입니다.
+
+```sql
+-- 특정 요구사항('target_req_id'에 UUID 입력) 변경 시 영향을 받는 모든 하위 아티팩트를 찾는 쿼리
+WITH RECURSIVE impact_analysis (source_id, target_id, target_type, link_type, depth, path) AS (
+    -- Anchor member: 시작점 설정
+    SELECT
+        r.id AS source_id,
+        tl.target_requirement_id AS target_id,
+        'requirement' AS target_type,
+        tl.link_type,
+        1 AS depth,
+        ARRAY[r.id] AS path
+    FROM requirements r
+    JOIN traceability_links tl ON r.id = tl.source_requirement_id
+    WHERE r.id = 'your-requirement-uuid-here' -- <-- 여기에 분석할 요구사항의 UUID를 입력하세요.
+    UNION ALL
+    SELECT
+        r.id AS source_id,
+        tl.target_artifact_id AS target_id,
+        'artifact' AS target_type,
+        tl.link_type,
+        1 AS depth,
+        ARRAY[r.id] AS path
+    FROM requirements r
+    JOIN traceability_links tl ON r.id = tl.source_requirement_id
+    WHERE r.id = 'your-requirement-uuid-here'
+
+    UNION ALL
+
+    -- Recursive member: 이전 단계의 결과를 기반으로 다음 단계 탐색
+    SELECT
+        ia.target_id,
+        tl.target_requirement_id,
+        'requirement',
+        tl.link_type,
+        ia.depth + 1,
+        ia.path |
+| ia.target_id
+    FROM traceability_links tl
+    JOIN impact_analysis ia ON tl.source_requirement_id = ia.target_id
+    WHERE NOT (ia.target_id = ANY(ia.path)) -- 순환 참조 방지
+    AND ia.target_type = 'requirement'
+
+    UNION ALL
+
+    SELECT
+        ia.target_id,
+        tl.target_artifact_id,
+        'artifact',
+        tl.link_type,
+        ia.depth + 1,
+        ia.path |
+| ia.target_id
+    FROM traceability_links tl
+    JOIN impact_analysis ia ON tl.source_requirement_id = ia.target_id
+    WHERE NOT (ia.target_id = ANY(ia.path)) -- 순환 참조 방지
+    AND ia.target_type = 'requirement'
+)
+-- 결과 조회: 영향을 받는 요구사항과 아티팩트의 상세 정보
+SELECT
+    ia.depth,
+    ia.link_type,
+    ia.target_type,
+    COALESCE(r.req_id, a.name) AS name,
+    COALESCE(r.heading, a.description) AS description
+FROM impact_analysis ia
+LEFT JOIN requirements r ON ia.target_id = r.id AND ia.target_type = 'requirement'
+LEFT JOIN artifacts a ON ia.target_id = a.id AND ia.target_type = 'artifact';
+``
+
+### 3.4. 요구사항 추적성 매트릭스(RTM) 생성
+RTM은 프로젝트 관리자와 QA팀에게 핵심적인 산출물입니다. 아래 SQL 쿼리는 traceability_links 테이블에 대한 JOIN을 사용하여 요구사항이 해당 테스트 케이스 및 최신 테스트 실행 상태에 어떻게 매핑되는지를 보여주는 고전적인 RTM을 구성합니다. 이는 기반이 되는 그래프 모델이 어떻게 전통적인 표 형식의 보고서를 생성할 수 있는지 보여줍니다.
+
+예시: 요구사항 추적성 매트릭스(RTM)
+
+| Requirement ID | Requirement Description | Test Case ID | Test Status |
+|---|---|---|---|
+| PROJ-FUN-001 | 사용자는 이메일과 비밀번호로 로그인할 수 있어야 한다. | TC-AUTH-001 | PASSED |
+| PROJ-FUN-001 | 사용자는 이메일과 비밀번호로 로그인할 수 있어야 한다. | TC-AUTH-002 | FAILED |
+| PROJ-FUN-002 | 사용자는 비밀번호를 재설정할 수 있어야 한다. | TC-AUTH-003 | PASSED |
+| PROJ-NFR-001 | 로그인 응답 시간은 1초 미만이어야 한다. | TC-PERF-001 | PASSED |
+| PROJ-FUN-003 | 관리자는 사용자 계정을 비활성화할 수 있어야 한다. | (uncovered) | (uncovered) |
+이 매트릭스는 어떤 요구사항이 테스트되지 않았는지(커버리지 갭), 또는 어떤 요구사항에 실패한 테스트가 있는지를 명확하게 보여주어 커버리지 분석의 기초를 제공합니다.
+
+
