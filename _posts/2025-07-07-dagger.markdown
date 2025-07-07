@@ -350,7 +350,7 @@ Docker가 컨테이너 기술을 대중화했듯이, Dagger는 프로그래밍 �
 
 이제 여러분도 Dagger의 강력한 기능들을 활용해서 차세대 CI/CD 파이프라인을 구축해보세요! 🚀 궁금한 점이 있으시면 언제든지 [Dagger 커뮤니티](https://discord.gg/dagger-io)에 참여해서 도움을 받으실 수 있습니다.
 
-인용:
+## 인용
 [1] Intro to Dagger | Dagger https://docs.dagger.io
 [2] Introducing Dagger: a new way to create CI/CD pipelines https://dagger.io/blog/public-launch-announcement
 [3] Introduction to Dagger - Anais Urlichs https://anaisurl.com/introduction-to-dagger/
