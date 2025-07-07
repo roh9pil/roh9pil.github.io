@@ -1,3 +1,11 @@
+---
+layout: post
+title:  "Dagger.io: 차세대 프로그래밍 가능한 CI/CD 엔진"
+date:   2025-07-07 22:06:00 +0900
+categories: SW Engineering
+---
+
+
 # Dagger.io: 차세대 프로그래밍 가능한 CI/CD 엔진
 
 ## 🚀 Dagger란 무엇인가?
