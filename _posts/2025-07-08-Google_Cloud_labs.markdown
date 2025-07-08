@@ -19,3 +19,9 @@
 - 대화혁 분석 API (exp. preview): 요인 분석
 - 기술 (llm) + 사람 (리터러시) + 품질 (프로세스)
 
+# BigQuery
+- claude 호출 가능
+- object table: bigquery 가 사용할 수 있도록
+- 
+- 
+- 
