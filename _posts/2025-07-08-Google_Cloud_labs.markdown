@@ -1,0 +1,12 @@
+# Labs
+- DATA Gov. 영역의 솔루션이 있음, 플렉스?
+- SQL, Python 채택률을 60% 이상
+- Agents
+  - Data Engineering, Governance, Science, conversational analytics
+- AI Query Engine
+- Colab enterprise
+- AI.Generatetable()
+- NL to SQL (이미 서비스 중)
+- 메타데이터 생성을 자동화 해주고 있음
+- Canvas
+- 
