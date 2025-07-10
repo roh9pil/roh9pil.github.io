@@ -99,35 +99,39 @@ mkdir hello-dagger
 cd hello-dagger
 
 # Go SDK로 모듈 초기화
-dagger init --sdk=go --name=hello-dagger
+dagger init --sdk=python --name=hello-dagger
 ```
 
 ### 2. 간단한 Hello World Function
 
 `main.go` 파일을 다음과 같이 작성하세요:
 
-```go
-package main
+```python
+import dagger
+from dagger import dag, function, object_type
 
-import (
-    "context"
-    "dagger/hello-dagger/internal/dagger"
-)
+# @object_type 데코레이터로 Dagger가 인식할 수 있는 객체로 만듭니다.
+@object_type
+class HelloDagger:
 
-type HelloDagger struct{}
+    # @function 데코레이터는 이 메소드를 호출 가능한 Dagger Function으로 지정합니다.
+    @function
+    def hello(self, name: str) -> str:
+        """인사말을 반환하는 간단한 함수입니다."""
+        return f"안녕하세요, {name}님! Dagger의 세계에 오신 것을 환영합니다! 🚀"
 
-// Hello는 인사말을 반환하는 간단한 함수입니다
-func (m *HelloDagger) Hello(name string) string {
-    return "안녕하세요, " + name + "님! Dagger의 세계에 오신 것을 환영합니다! 🚀"
-}
+    # I/O 작업이 포함된 함수는 async/await를 사용합니다.
+    @function
+    async def container_example(self) -> str:
+        """Container를 이용한 실제 작업 예제"""
+        return await (
+            dag.container()
+            .from_("alpine:latest")  # 'from'은 Python 예약어이므로 'from_' 사용
+            .with_exec(["echo", "Dagger로 컨테이너 제어하기!"])
+            .stdout()
+        )
 
-// Container를 이용한 실제 작업 예제
-func (m *HelloDagger) ContainerExample(ctx context.Context) (string, error) {
-    return dag.Container().
-        From("alpine:latest").
-        WithExec([]string{"echo", "Dagger로 컨테이너 제어하기!"}).
-        Stdout(ctx)
-}
+
 ```
 
 ### 3. Function 실행하기
