@@ -1,14 +1,14 @@
 # Labs
-- DATA Gov. 영역의 솔루션이 있음, 플렉스?
-- SQL, Python 채택률을 60% 이상
-- Agents
+- Dataplex: DATA Gov. 영역의 솔루션이 있음
+- AI 코드: SQL, Python 채택률은 60% 이상
+- Agents 출시중
   - Data Engineering, Governance, Science, conversational analytics (Looker)
 - AI Query Engine
-- Colab enterprise
-- AI.Generatetable()
+- Colab enterprise 로 기업내 환경
+- Bigquery에서 이런 함수로 AI.Generatetable()
 - NL to SQL (이미 서비스 중)
-- 메타데이터 생성을 자동화 해주고 있음
-- Canvas
+- Dataplex Discovery: 메타데이터 생성을 자동화 해주고 있음
+- Canvas: Visual workflow
 
 # Data "Agent"
 - Biz. Context Layer
@@ -22,6 +22,3 @@
 # BigQuery
 - claude 호출 가능
 - object table: bigquery 가 사용할 수 있도록
-- 
-- 
-- 
