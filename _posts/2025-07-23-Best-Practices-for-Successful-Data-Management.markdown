@@ -1,3 +1,10 @@
+---
+layout: post
+title:  "Best practices for successful data management"
+date:   2025-07-23 07:12:00 +0900
+categories: SW Engineering
+---
+
 # KEYS 원칙
 "데이터의 잠재력을 여는 4개의 열쇠(KEYS)를 기억하세요."
 이 구호는 데이터베이스의 핵심 요소인 '키(Key)'를 중심으로, 명확하고 구조화된 데이터베이스를 만들기 위한 4가지 핵심 활동을 강조합니다.
