@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Dictionart for Software Engineering "
+title: "Dictionary for Software Engineering "
 date:   2025-08-07 06:04:00 +0900
 categories: work
 ---
