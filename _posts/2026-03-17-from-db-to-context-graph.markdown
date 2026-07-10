@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "인공지능 데이터 아키텍처의 패러다임 전환: 관계형 데이터베이스에서 컨텍스트 그래프까지"
+title:  "AI Ready Data: 관계형 데이터베이스에서 컨텍스트 그래프까지"
 date:   2026-03-17 23:04:00 +0900
 categories: data architecture
 ---
