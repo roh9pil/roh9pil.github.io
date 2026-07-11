@@ -1,3 +1,12 @@
+---
+layout: post
+title:  "Google Cloud Labs 2025"
+date:   2025-07-08 13:04:00 +0900
+categories: data platform
+---
+
+knowledge catalog 라는 이름으로 바뀌어서 출시되었다.
+
 # Labs
 - Dataplex: DATA Gov. 영역의 솔루션이 있음
 - AI 코드: SQL, Python 채택률은 60% 이상
